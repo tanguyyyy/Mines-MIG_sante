@@ -1,0 +1,30 @@
+﻿Date;Document;Employé;Unité;Fichier lié
+2021-11-18;Permission;Dr 1;Oncologie;permission.pdf
+2021-11-17;Consulation soins palliatifs;Dr 2;Soins palliatifs;cr_1.pdf
+2021-11-05;PSL RCP;Dr 3;Multi-services;rcp_1.pdf
+2021-11-04;CR Imagerie Scanner du rachis;Dr 4;Scanner;cr_2.pdf
+2021-11-02;CR Imagerie Radio du rachis;Dr 5;Radio;cr_3.pdf
+2021-11-01;Evolution médicale;Dr 6;Orthopédie;evol_1.pdf
+2021-10-29;Lettre médicale;Dr 2;Soins palliatifs;doc_1.pdf
+2021-10-28;CR Anapath;Dr 7;Anapath;cr_4.pdf
+2021-10-28;PSL BMI;Dr 2;Soins palliatifs;bmi_1.pdf
+2021-10-27;Lettre suivi IDE;IDE 1;Soins palliatifs;doc_2.pdf
+2021-10-27;CRH orthopédie;Dr 8;Orthopédie;crh_1.pdf
+2021-10-27;Suites, sortie, prescriptions;Dr 8;Orthopédie;doc_3.pdf
+2021-10-26;CRH;Dr 2;Soins palliatifs;crh_2.pdf
+2021-10-26;Evolution médicale;Dr 2;Soins palliatifs;evol_2.pdf
+2021-10-25;PSL RCP;Dr 9;Multi-services;rcp_2.pdf
+2021-10-25;Certificat d'anesthésie difficile;Dr 10;Anesthésie-réanimation;doc_4.pdf
+2021-10-25;CR Anesthéise;Dr 10;Anesthésie-réanimation;cr_5.pdf
+2021-10-19;CRO Anesthésie;Dr 10;Anesthésie-réanimation;cro_1pdf
+2021-10-19;PSL RCP;Dr 11;Multi-services;rcp_3.pdf
+2021-10-19;Lettre type;Dr 11;Multi-services;doc_5.pdf
+2021-10-19;PSL RCP;Dr 11;Multi-services;rcp_4.pdf
+2021-10-19;CR visite pré-anesthésie;Dr 10;Anesthésie-réanimation;cr_6.pdf
+2021-10-18;Ordonnance;Dr 12;Oncologie;doc_6.pdf
+2021-10-17;CR Imagerie IRM;Dr 13;IRM;cr_7.pdf
+2021-10-15;CR Imagerie Scanner du rachis;Dr 14;Scanner;cr_8.pdf
+2021-10-13;CR RCP;Dr 15;Multi-services;rcp_5.pdf
+2021-10-13;Protocole inclusion cohorte;Dr 16;Anapath;doc_7.pdf
+2021-10-13;Evolution médicale;Dr 2;Soins palliatifs;evol_4.pdf
+2021-10-12;BMI;Dr 2;Soins palliatifs;bmi_2.pdf

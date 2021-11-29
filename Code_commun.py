@@ -6,7 +6,6 @@ class Dossier_Patient_Informatise:
     """
     name, surname --> str, pas d'accent pour éviter les erreurs de codage
     """
-
     def __init__(self, name = None, surname = None):
         self.name = name
         self.surname = surname
@@ -46,9 +45,9 @@ class Dossier_Patient_Informatise:
         print("________________________________________________________________________")
 
     
-    def flags(self, time = 6, categories = []):
+    def flags(self, date, categories = []):
         """
-        time --> le nombre de mois affichés sur la frise
+        date --> la date jusqu'à laquelle on affiche
         categories --> liste de chaines de caractères contenant les types de document que l'on veut visualiser
         """
         output = []
@@ -78,8 +77,3 @@ A = Dossier_Patient_Informatise('Michu', 'Segolene')
 
 print(A.flags(6, ['BMI', 'CRH']))
 
-d1 = from_string_to_date('2001-01-01')
-d2 = dt.datetime.now()
-
-
-print((d2-d1).years)
