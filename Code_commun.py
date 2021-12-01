@@ -1,6 +1,9 @@
 import datetime as dt
 from pathlib import Path
 import pandas as pd
+from tkinter import filedialog
+import lecture_pdf
+import re
 
 class Dossier_Patient_Informatise:
     """
@@ -26,11 +29,35 @@ class Dossier_Patient_Informatise:
 
         self.data = pd.read_csv(file_3, sep = ';')
         #Ajout d'une colonne 'Type' au tableau 'data
-        self.data['Type de document'] = self.data['Document']
-        for i, document in zip(self.data.index, self.data['Document']):
-            self.data['Type de document'].iloc[i] = from_name_to_type(document)
+        self.data['Type de document'] = self.data['Document'].transform(from_name_to_type)
+
         #On converti en objet 'date'
         self.data['Date'] = self.data['Date'].transform(from_string_to_date)
+        self.data['Date téléversement'] = self.data['Date téléversement'].transform(from_string_to_date)
+
+        #On complète les dates manquantes en lisant les pdf
+        self.fill_dates()
+
+    def fill_dates(self):
+        for ind in self.data.index:
+            if pd.isna(self.data['Date'].iloc[ind]):
+                text = lecture_pdf.from_pdf_to_text(f"dossiers_patients/{self.name} {self.surname}/{self.data['Fichier lié'].iloc[ind]}")
+                date_list = re.findall("\d\d[-/]\d\d[-/]\d{2,4}", text)
+                if date_list:
+                    for i, date in enumerate(date_list):
+                        date_list[i] = re.split('/|-', date)
+                    for i, date in enumerate(date_list):
+                        if len(date[2]) == 2:
+                            date[2] = '20' + date[2]
+                        date_list[i] = dt.date(int(date[2]), int(date[1]), int(date[0]))                    
+                #date_list contient toutes les dates qui apparaissent dans le texte. Il reste à garder celle qui est la plus pertinente
+                #On supprime la date de naissance, au cas où c'est la seule qui apparaît
+                while self.b_date in date_list:
+                    date_list.remove(self.b_date)
+                #Ensuite, on choisi de garder la date la plus tardive, ce qui peut être discutable
+                if date_list:
+                    self.data.loc[ind, 'Date'] = max(date_list)
+    
 
 
     def disp_infos(self):
@@ -48,32 +75,32 @@ class Dossier_Patient_Informatise:
     def flags(self, date, categories = []):
         """
         date --> la date jusqu'à laquelle on affiche
-        categories --> liste de chaines de caractères contenant les types de document que l'on veut visualiser
+        categories --> liste de chaines de caractères contenant les types de document que l'on veut visualiser "CRH", "BMI", etc...
         """
         output = []
         for ind in self.data.index:
-            if self.data['Type de document'].iloc[ind] in categories:
+            if self.data['Type de document'].iloc[ind] in categories and self.data['Date'].iloc[ind] >= date:
                 output.append((self.data['Date'].iloc[ind], 
                     self.data['Document'].iloc[ind], 
                     self.data['Unité'].iloc[ind]))
         return output
 
 def from_string_to_date(x):
-    return dt.datetime.strptime(x, "%Y-%m-%d")
+    if pd.notna(x):
+        return dt.datetime.strptime(x, "%Y-%m-%d").date()
+
 
 def from_name_to_type(string):
     categories = ['BMI', 'RCP', 'CRO', 'CRH']
     for cat in categories:
         if cat in string.upper():
             return cat
-    return 'Autre'
+    return 'Inconnu'
 
 
 
 
 A = Dossier_Patient_Informatise('Michu', 'Segolene')
 
-
-
-print(A.flags(6, ['BMI', 'CRH']))
+print(A.data)
 
