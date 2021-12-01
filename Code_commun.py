@@ -1,7 +1,6 @@
 import datetime as dt
 from pathlib import Path
 import pandas as pd
-from tkinter import filedialog
 import lecture_pdf
 import re
 

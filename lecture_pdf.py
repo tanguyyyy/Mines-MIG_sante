@@ -5,7 +5,7 @@ except ImportError:
 import pytesseract
 from pdf2image import convert_from_path
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Users\Tanguy\anaconda3\envs\tesseract\Library\bin\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'C:\Users\lamar\miniconda2\envs\tesseract\Library\bin\tesseract.exe'
 
 from pdf2image import convert_from_path
 
