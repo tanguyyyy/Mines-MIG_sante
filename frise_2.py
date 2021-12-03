@@ -9,14 +9,16 @@ from ttkthemes import ThemedStyle
 import lecture_pdf
 import re
 from pandastable import Table, TableModel
+from functools import partial
 
 #liste des types de widgets dans canvas
 data_list = []
 #liste des listes de boutons de lecture de chaque évènement
 event_button = []
 
+
 #Choix des données d'affichage
-data_type = ['RCP', 'BMI', 'CRO', 'CRH', 'Evolution médicale','CRU', 'CR', 'CS']
+data_type = ['RCP', 'BMI', 'CRO', 'CRH', 'CRU', 'CR', 'Autre']
 
 
 class TestApp(tk.Frame):
@@ -77,7 +79,8 @@ class Dossier_Patient_Informatise:
             if pd.isna(self.data['Date'].iloc[ind]):
                 text = lecture_pdf.from_pdf_to_text(f"dossiers_patients/{self.name} {self.surname}/{self.data['Fichier lié'].iloc[ind]}")
                 text = text.lower()
-                date_list = re.findall("\d\d[-/]\d\d[-/]\d{2,4}", text)
+                date_list = re.findall("\d\d[-]\d\d[-]\d{2,4}", text)
+                date_list += re.findall("\d\d[/]\d\d[/]\d{2,4}", text)
                 if date_list:
                     for i, date in enumerate(date_list):
                         date_list[i] = re.split('/|-', date)
@@ -132,12 +135,47 @@ window_y = window.winfo_screenheight()
 #Chargement des images
 load_frise = Image.open('image/Frise_fond_tranparent-3.png')       
 render_frise = ImageTk.PhotoImage(load_frise)
-load_flag = Image.open('image/flag.png').resize((100, 100), Image.ANTIALIAS)
-render_flag = ImageTk.PhotoImage(load_flag)
-load_main_background = Image.open('image/background_main.jpg').resize((window_x, window_y), Image.ANTIALIAS)
+render_flag = []
+load_cursor = Image.open('image/curseur.png').resize((70, 70), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_cursor))
+
+load_1 = Image.open('image/img_1.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_1))
+
+load_2 = Image.open('image/img_2.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_2))
+
+load_3 = Image.open('image/img_3.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_3))
+
+load_4 = Image.open('image/img_4.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_4))
+
+load_5 = Image.open('image/img_5.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_5))
+
+load_6 = Image.open('image/img_6.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_6))
+
+load_7 = Image.open('image/img_7.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_7))
+
+load_8 = Image.open('image/img_8.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_8))
+
+load_9 = Image.open('image/img_9.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_9))
+
+load_10 = Image.open('image/img_9+.png').resize((50, 50), Image.ANTIALIAS)
+render_flag.append(ImageTk.PhotoImage(load_10))
+
+
+load_main_background = Image.open('image/background_2.png').resize((window_x, window_y), Image.ANTIALIAS)
 render_main_background = ImageTk.PhotoImage(load_main_background)
 load_bout_fleche_rouge = Image.open("image/Bout_fleche_rouge.png")
 render_bout_fleche_rouge = ImageTk.PhotoImage(load_bout_fleche_rouge)
+load_event_counter = Image.open('image/img_1.png').resize((50, 50), Image.ANTIALIAS)
+render_event_counter = ImageTk.PhotoImage(load_event_counter)
 
 #Création du canva
 canvas = tk.Canvas(window, height=window_y, width=window_x)
@@ -149,7 +187,7 @@ background = canvas.create_image(window_x/2, window_y/2, anchor='center', image=
 #Affichage de la frise dans une nouvelle fenêtre
 def affichage():
     global data_list
-    global event_button   
+    global event_button
     """
     affichage de la frise
     """
@@ -187,10 +225,16 @@ def affichage():
         beg_date = current_date - dt.timedelta(days=3650)
 
     #Affichage fiche patient
-    patient_record = canvas.create_rectangle(565.0, 15.0, 865.0, 215.0, fill='#013220')
+    patient_record = canvas.create_rectangle(565.0, 15.0, 865.0, 215.0, fill='#6f716e')
     ribbon = canvas.create_rectangle(565.0, 15.0, 595.0, 65.0, fill='#780000')
+
+    #Affichage legende code couleur
+    legend_urgency = canvas.create_rectangle(575, 165, 605, 185, fill='#e73200')
+    legend_hosp = canvas.create_rectangle(575, 190, 605, 210, fill='#c10404')
     data_list.append(patient_record)
     data_list.append(ribbon)
+    data_list.append(legend_urgency)
+    data_list.append(legend_hosp)
 
     #Légende dans patient_record
     name_display = canvas.create_text(658, 64,anchor='center', text='Nom, Prénom : ', font=('Arial Black', 10))
@@ -200,6 +244,11 @@ def affichage():
     patient_height = canvas.create_text(661, 124, anchor='center', text='Taille (cm) : '+str(DPI.height), font=('Arial Black', 10))
     patient_weight = canvas.create_text(654, 144, anchor='center', text='Poids (kg) : '+str(DPI.weight), font=('Arial Black', 10))
     data_list += [name_display, patient_name, patient_sex, patient_birthdate, patient_height, patient_weight]
+    
+    #Legende dans code couleur
+    urgency_txt = canvas.create_text(645, 175, text='Urgences', font=('Arial Black', 10))
+    hospi_txt = canvas.create_text(675, 200, text='Séjour à l\'hôpital', font=('Arial Black', 10))
+
 
     #Code couleur (à mettre en annexe, en-dehors de la fonction d'affichage de la frise)
 
@@ -249,7 +298,10 @@ def affichage():
         D = (current_date - date_BMI).days #durée d'hospitalisation
         plagetps = (current_date-beg_date).days #plage de temps affichée
         x = beg_frise[0] + ((date_BMI-beg_date).days/plagetps)*L #abscisse du point en haut à gauche du rectangle
-        rect_rouge = canvas.create_rectangle(x, beg_frise[1]-1, 1280, end_frise[1]+4, fill='#c10404')
+        if (date_BMI - beg_date).days > 0:
+            rect_rouge = canvas.create_rectangle(x, beg_frise[1]-1, 1280, end_frise[1]+4, fill='#c10404')
+        else:
+            rect_rouge = canvas.create_rectangle(beg_frise[0] - 80, beg_frise[1]-1, 1280, end_frise[1]+4, fill='#c10404')
         fleche = canvas.create_image(890, 500, anchor='center', image=render_bout_fleche_rouge)
         data_list += [fleche, rect_rouge]
 
@@ -263,6 +315,8 @@ def affichage():
                 date_f = DPI.data['Date'][j] #date du CRH
                 if (date_d - beg_date).days > 0:
                     hospi(date_d, date_f) #affichage de la plage rouge d'hospitalisation
+                elif (date_d - beg_date).days < 0 and (date_f - beg_date).days > 0:
+                    hospi(beg_date, date_f)
             else: #si on n'a pas de CRH (le patient est toujours hospitalisé)
                 bout_fleche_rouge(i)
 
@@ -286,18 +340,24 @@ def affichage():
         x_pos = (days_event/((current_date - beg_date).days)) * (end_frise[0] - beg_frise[0]) + beg_frise[0]
         return x_pos
 
-    def mark(time):
-        """Prend une date et le type d'un élément et l'affiche 
-        sur la frise si draw est True"""
+    def mark(time, n):
+        """
+        Prend une date et le type d'un élément et l'affiche 
+        sur la frise
+        """
         global data_list
         days_event = abs((time - beg_date).days)
         x_pos = (days_event/((current_date - beg_date).days)) * (end_frise[0] - beg_frise[0]) + beg_frise[0]
         #drapeau
-        flag = canvas.create_image(x_pos - 10, beg_frise[1], anchor='center', image=render_flag)
+        cursor =  canvas.create_image(x_pos - 30, beg_frise[1] - 30, anchor='center', image=render_flag[0])
+        if n < 10:
+            flag = canvas.create_image(x_pos - 30, beg_frise[1] - 45, anchor='center', image=render_flag[n])
+        else :
+            flag = canvas.create_image(x_pos - 30, beg_frise[1] - 45, anchor='center', image=render_flag[10])
         #date et type d'évènement
-        text1 = canvas.create_text(x_pos-30, beg_frise[1]+30, anchor='center', text=time, font=('Arial Black', 8))
-        data_list += [flag, text1]
-        return (flag, text1)
+        text1 = canvas.create_text(x_pos-30, beg_frise[1]+30, anchor='center', text=time, font=('Arial Black', 10))
+        data_list += [flag, text1, cursor]
+        return (cursor, flag, text1)
 
     #Définition des évènements
 
@@ -341,11 +401,12 @@ def affichage():
         read_button = [] #liste des boutons de l'évènement
         date = event[0]
         x_pos = pos(date)
-        flag_loc, date_loc = mark(date)
+        n = len(event[1])
+        cursor_loc, flag_loc, date_loc = mark(date, n)
         for index in event[1]:
             file = DPI.data['Fichier lié'].iloc[index]
             c = DPI.data['Type de document'].iloc[index]
-            button_loc = tk.Button(window, text=c, font=('Arial Black', 10), bg='grey', command = lambda : os.startfile(f'dossiers_patients\\{patient}\\{file}'))
+            button_loc = tk.Button(window, text=c, font=('Arial Black', 10), bg='grey', command=partial(os.startfile, f'dossiers_patients\\{patient}\\{file}'))
             button_loc.place(x=x_pos-60, y=beg_frise[1]+150 + 32*counter[date])
             counter[date] += 1
             read_button.append(button_loc)
@@ -353,10 +414,10 @@ def affichage():
 
     
     #Affichage date de début/fin 
-    event_beg, event_current = mark(beg_date), mark(current_date)
+    #event_beg, event_current = mark(beg_date), mark(current_date)
 
     #Déplacement de object pour récupérer des coordonnées inutile pour le code final mais sympa pour coder
-    object = event_current[0]
+    object = flag_loc
     def left(event):
         x = -5
         y = 0
@@ -380,15 +441,13 @@ def affichage():
         y = -5
         canvas.move(object, x, y)
         print(canvas.coords(object))
-
     window.bind("<Left>", left)
     window.bind("<Right>", right)
     window.bind("<Down>", down)
     window.bind("<Up>", up)
 
-
 #Choix des paramètres d'affichage:
-frame = tk.LabelFrame(window, text='Sélectionnez les données souhaitées', padx=20, pady=10)
+frame = tk.LabelFrame(window, text='Sélectionnez les données souhaitées', padx=20, pady=0, bg='#6e706e')
 frame.place(x=0, y=0)
 
 #Choix du patient
@@ -412,7 +471,7 @@ def check():
     for c in data_type:
         if c in ['RCP', 'CRH', 'CR']:#choix des types de données à afficher initialement
             checked[c].set(True)
-        button_loc = tk.Checkbutton(frame, text=c, var=checked[c], width=20, anchor="w", command=affichage)
+        button_loc = tk.Checkbutton(frame, text=c, var=checked[c], width=20, anchor="w", command=affichage, bg='#6e706e')
         button_loc.pack()
     return checked
 
@@ -420,7 +479,7 @@ checked = check()
 
 
 #bouton affichage de la frise 
-bouton1 = tk.Button(frame, text ='Afficher frise', font=("Arial Black", 10), command=affichage, bg='White')
+bouton1 = tk.Button(frame, text ='Afficher frise', font=("Arial Black", 10), command=affichage, bg='#6e706e')
 bouton1.pack()
 
 #bouton de fermeture de la frise
@@ -428,7 +487,7 @@ bouton2 = tk.Button(window, text='Fermer', font=(('Arial Black'), 10), command=w
 bouton2.place(x=window_x-60, y=0)
 
 #bouton données
-bouton3 = tk.Button(frame, text='Données patient', font=(('Arial Black'), 10), bg='White', command=disp_data)
+bouton3 = tk.Button(frame, text='Documents patient', font=(('Arial Black'), 10), bg='#6e706e', command=disp_data)
 bouton3.pack()
 
 window.mainloop()
